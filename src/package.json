@@ -1,0 +1,26 @@
+{
+  "name": "migraine-care-system",
+  "version": "1.0.0",
+  "description": "偏頭痛個案照護系統",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --outDir dist",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "latest",
+    "recharts": "latest",
+    "sonner": "^2.0.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.1",
+    "tailwindcss": "^4.0.0"
+  }
+}
