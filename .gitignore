@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.gradle/
+thomas-backend/build/
+thomas-backend/bin/
+*.pdf
+.DS_Store
