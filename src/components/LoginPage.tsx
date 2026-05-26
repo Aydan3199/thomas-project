@@ -22,13 +22,13 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     e.preventDefault();
     if (email && password) {
       try {
-        // 將登入的 Email / 帳號轉為小寫並擷取前綴作為登入帳號，以實現大小寫不敏感登入
-        const username = email.includes('@') ? email.split('@')[0].toLowerCase() : email.toLowerCase();
+        // 支援使用 Email 全名或傳統名稱進行大小寫不敏感登入
+        const loginAccount = email.toLowerCase().trim();
         
         const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: username, password }),
+          body: JSON.stringify({ name: loginAccount, password }),
         });
         
         if (response.ok) {
@@ -48,16 +48,13 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     e.preventDefault();
     if (registerName && registerEmail && registerPassword && registerRole) {
       try {
-        // 註冊時，強制以 Email 前綴小寫作為資料庫唯一帳號，解決姓名與 Email 登入不吻合的 bug
-        const username = registerEmail.includes('@') 
-          ? registerEmail.split('@')[0].toLowerCase() 
-          : registerEmail.toLowerCase();
-
+        // 註冊時，同時傳送使用者的真實姓名以及完整的 Email 地址
         const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: username,
+            name: registerName.trim(),
+            email: registerEmail.toLowerCase().trim(),
             password: registerPassword,
             role: registerRole,
           }),
@@ -65,7 +62,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
         if (response.ok) {
           const userData = await response.json();
-          alert(`註冊成功！您的登入帳號為：${username}\n已自動為您登入系統。`);
+          alert(`註冊成功！您的登入帳號為您的 Email：${registerEmail.toLowerCase().trim()}\n已自動為您登入系統。`);
           onLogin(userData);
         } else {
           const errorData = await response.json();
