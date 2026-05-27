@@ -23,6 +23,7 @@ interface Questionnaire {
 export function QuestionnaireList() {
   const currentUser = useAuthStore((state) => state.currentUser);
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<string | null>(null);
+  const [customDate, setCustomDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([
     {
       id: 'midas',
@@ -90,7 +91,6 @@ export function QuestionnaireList() {
                setQuestionnaires(prev => prev.map(q => {
                    const qs = responses.filter(r => r.questionnaireId === q.id);
                    if (qs.length > 0) {
-                       // Find the latest response by date simply or take first
                        const lastResponse = qs[qs.length - 1]; 
                        return { ...q, completed: true, lastCompleted: lastResponse.completedAt.split('T')[0] };
                    }
@@ -101,10 +101,18 @@ export function QuestionnaireList() {
     }
   }, [currentUser]);
 
-  const handleComplete = async (questionnaireId: string, score: number = 0, targetListId?: string) => {
+  // Reset customDate to today whenever selectedQuestionnaire changes
+  useEffect(() => {
+    setCustomDate(new Date().toISOString().split('T')[0]);
+  }, [selectedQuestionnaire]);
+
+  const handleComplete = async (questionnaireId: string, score: number = 0, targetListId?: string, completionDate?: string) => {
     if (!currentUser) return;
     
     const displayId = targetListId || questionnaireId;
+    const finalDate = completionDate || new Date().toISOString().split('T')[0];
+    const completedAtStr = `${finalDate}T12:00:00`; // standard LocalDateTime string
+    
     try {
         await fetch(`${API_BASE_URL}/api/questionnaires`, {
             method: 'POST',
@@ -113,14 +121,15 @@ export function QuestionnaireList() {
                 patientId: currentUser.id,
                 questionnaireId: questionnaireId,
                 score: score,
-                details: 'Completed via UI'
+                details: 'Completed via UI',
+                completedAt: completedAtStr
             })
         });
         
         setQuestionnaires((prev) =>
           prev.map((q) =>
             q.id === displayId
-              ? { ...q, completed: true, lastCompleted: new Date().toISOString().split('T')[0] }
+              ? { ...q, completed: true, lastCompleted: finalDate }
               : q
           )
         );
@@ -131,37 +140,73 @@ export function QuestionnaireList() {
     setSelectedQuestionnaire(null);
   };
 
+  const renderQuestionnaireWithDatePicker = (component: React.ReactNode) => {
+    return (
+      <div className="space-y-4">
+        {/* Date Selector Banner */}
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+          <div className="text-sm text-primary font-medium flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-primary rounded-full animate-pulse"></span>
+            您可以指定此問卷的填寫日期（預設為今天）：
+          </div>
+          <input
+            type="date"
+            max={new Date().toISOString().split('T')[0]}
+            value={customDate}
+            onChange={(e) => setCustomDate(e.target.value)}
+            className="px-4 py-2 border border-border rounded-lg text-sm bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer shadow-inner font-medium"
+          />
+        </div>
+        {component}
+      </div>
+    );
+  };
+
   if (selectedQuestionnaire === 'midas') {
-    return <MIDASQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('midas', score)} />;
+    return renderQuestionnaireWithDatePicker(
+      <MIDASQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('midas', score, undefined, customDate)} />
+    );
   }
   if (selectedQuestionnaire === 'hads') {
-    return (
+    return renderQuestionnaireWithDatePicker(
       <HADSQuestionnaire 
         onBack={() => setSelectedQuestionnaire(null)} 
         onComplete={async (anxiety, depression) => {
-          await handleComplete('hads-anxiety', anxiety, 'hads');
-          await handleComplete('hads-depression', depression, 'hads');
+          await handleComplete('hads-anxiety', anxiety, 'hads', customDate);
+          await handleComplete('hads-depression', depression, 'hads', customDate);
         }} 
       />
     );
   }
   if (selectedQuestionnaire === 'bdi') {
-    return <BDIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('bdi', score)} />;
+    return renderQuestionnaireWithDatePicker(
+      <BDIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('bdi', score, undefined, customDate)} />
+    );
   }
   if (selectedQuestionnaire === 'psqi') {
-    return <PSQIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('psqi', score)} />;
+    return renderQuestionnaireWithDatePicker(
+      <PSQIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('psqi', score, undefined, customDate)} />
+    );
   }
   if (selectedQuestionnaire === 'fss') {
-    return <FSSQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('fss', score)} />;
+    return renderQuestionnaireWithDatePicker(
+      <FSSQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('fss', score, undefined, customDate)} />
+    );
   }
   if (selectedQuestionnaire === 'wpi') {
-    return <WPIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('wpi', score)} />;
+    return renderQuestionnaireWithDatePicker(
+      <WPIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('wpi', score, undefined, customDate)} />
+    );
   }
   if (selectedQuestionnaire === 'allodynia') {
-    return <AllodyniaQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('allodynia', score)} />;
+    return renderQuestionnaireWithDatePicker(
+      <AllodyniaQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('allodynia', score, undefined, customDate)} />
+    );
   }
   if (selectedQuestionnaire === 'pss') {
-    return <PSSQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('pss', score)} />;
+    return renderQuestionnaireWithDatePicker(
+      <PSSQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('pss', score, undefined, customDate)} />
+    );
   }
 
   return (
