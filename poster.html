@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>學術海報 - 偏頭痛個案照護管理系統</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --medical-blue: #eff6ff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-h: 100vh;
+        }
+
+        /* 國際學術海報比例 A1標準比例 (約 594mm x 841mm), 網頁呈現 1200px x 1700px 高解析度輸出 */
+        .poster {
+            width: 1200px;
+            min-height: 1697px;
+            background: #ffffff;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border-radius: 24px;
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* 背景流光漸層裝飾 */
+        .poster::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, rgba(59,130,246,0) 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .poster::after {
+            content: '';
+            position: absolute;
+            bottom: -5%;
+            left: -5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, rgba(6,182,212,0) 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Header 樣式 */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 54px;
+            height: 54px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+        }
+
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 2.5;
+        }
+
+        .main-title {
+            font-size: 46px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 1.5px;
+        }
+
+        .meta-info {
+            margin-top: 15px;
+            font-size: 20px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .meta-info span {
+            background: var(--medical-blue);
+            padding: 6px 18px;
+            border-radius: 30px;
+            color: var(--primary);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+
+        /* 佈局結構 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            position: relative;
+            z-index: 2;
+            flex-grow: 1;
+        }
+
+        /* 卡片/區塊樣式 */
+        .section-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .section-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #334155;
+            text-align: justify;
+        }
+
+        /* 實驗展示特殊樣式 */
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tech-tag {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .tech-tag.highlight {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        /* 成果展示網格 */
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 15px;
+        }
+
+        .screenshot-item {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .screenshot-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .screenshot-title span.badge {
+            background: var(--medical-blue);
+            color: var(--primary);
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .image-wrapper {
+            width: 100%;
+            height: 260px;
+            background: #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(1.03);
+        }
+
+        .image-placeholder-text {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            padding: 20px;
+            position: absolute;
+            background: rgba(248, 250, 252, 0.95);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        /* 頁尾 */
+        .footer-banner {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-t: 1px solid var(--border);
+            padding-t: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 瀏覽器列印海報最佳化 */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .poster {
+                box-shadow: none;
+                border-radius: 0;
+                width: 100%;
+                height: 100%;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="poster" id="poster-element">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor"/>
+                    </svg>
+                </div>
+                <h1 class="main-title">偏頭痛個案照護管理系統</h1>
+            </div>
+            <div class="meta-info">
+                <span>組員：許學瀅 馮宣諺 李弘禹</span>
+                <span>指導老師：黃建中老師</span>
+            </div>
+        </div>
+
+        <!-- Layout Grid -->
+        <div class="content-grid">
+            <!-- 1. 背景介紹 -->
+            <div class="section-card">
+                <h2 class="section-title">背景介紹</h2>
+                <p class="section-text">
+                    偏頭痛是一項影響全球數億人生活與工作的慢性疾病，然而許多病患在發作時多未進行完整且規律的臨床紀錄。醫師在進行診斷與追蹤時，往往只能依賴病患模糊的記憶或零散的紙本紀錄，使得診斷缺乏客觀依據、病歷難以追蹤，且數據資料無法進行系統化的統計與分析。
+                </p>
+                <p class="section-text" style="margin-top: 12px;">
+                    本照護管理系統針對此痛點，提供直覺的症狀紀錄、規律的回診記錄、智慧提醒與歷史量表統合等功能，期望協助改善醫療端的精準決策流程與個案的長期照護品質。
+                </p>
+            </div>
+
+            <!-- 2. 研究目的與重要性 -->
+            <div class="section-card">
+                <h2 class="section-title">研究目的與重要性</h2>
+                <p class="section-text">
+                    本研究致力於開發「偏頭痛個案照護管理系統」，無縫整合日常偏頭痛日誌、健康評估量表、臨床提醒追蹤與醫學統計圖表。
+                </p>
+                <p class="section-text" style="margin-top: 10px; font-weight: 500; color: var(--primary);">
+                    其核心研究價值在於：
+                </p>
+                <ul style="list-style-type: square; margin-left: 24px; margin-top: 8px; font-size: 16px; line-height: 1.8; color: #334155;">
+                    <li><strong>自我健康賦能</strong>：培養個案規律紀錄發作之習慣，提升主動健康防護意識。</li>
+                    <li><strong>優化醫療協同機制</strong>：透過客觀真實數據輔助，打破傳統僅憑印象的溝通隔閡，大幅提升門診評估效率。</li>
+                    <li><strong>智慧風險識別</strong>：內建臨床智慧風險篩選演算法，協助個案管理師及時篩選並介入高風險個案。</li>
+                </ul>
+            </div>
+
+            <!-- 3. 實驗設計與方法 -->
+            <div class="section-card">
+                <h2 class="section-title">實驗設計與方法</h2>
+                <p class="section-text">
+                    本系統採行高可用性之<strong>前後端分離技術架構</strong>開發。前端網頁端採用 React.js、Tailwind CSS 建立極致流暢、具高互動感的護眼暗色調（HSL Palette）響應式儀表板；後端採用 Spring Boot 結合 JPA 控制層，並選用 Supabase / PostgreSQL 作為實體資料庫，實踐真正的即時資料異步同步。
+                </p>
+                <div class="tech-tags">
+                    <span class="tech-tag highlight">React.js</span>
+                    <span class="tech-tag highlight">Tailwind CSS</span>
+                    <span class="tech-tag highlight">Spring Boot</span>
+                    <span class="tech-tag highlight">PostgreSQL</span>
+                    <span class="tech-tag">Zustand</span>
+                    <span class="tech-tag">Supabase DB</span>
+                    <span class="tech-tag">Recharts</span>
+                    <span class="tech-tag">Hibernate</span>
+                </div>
+            </div>
+
+            <!-- 4. 成果展示 -->
+            <div class="section-card" style="grid-row: span 2;">
+                <h2 class="section-title">成果展示</h2>
+                <div class="screenshots-grid">
+                    <!-- 項目 1 -->
+                    <div class="screenshot-item">
+                        <div class="screenshot-title">
+                            病人端 - 頭痛日誌紀錄
+                            <span class="badge">Patient Log</span>
+                        </div>
+                        <div class="image-wrapper">
+                            <!-- 請更換為 screenshots 資料夾下最佳的病人填寫日誌截圖 -->
+                            <img src="screenshots/media__1779833639696.png" onerror="this.style.display='none'">
+                            <div class="image-placeholder-text">
+                                <strong>[ 病人端 - 日誌紀錄頁面 ]</strong>
+                                <span>(請點選此處或參考 screenshots 資料夾)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 項目 2 -->
+                    <div class="screenshot-item">
+                        <div class="screenshot-title">
+                            病人端 - 8大健康量表自訂日期
+                            <span class="badge">Questionnaire</span>
+                        </div>
+                        <div class="image-wrapper">
+                            <!-- 請更換為 screenshots 資料夾下最佳的量表填寫截圖 -->
+                            <img src="screenshots/media__1779836638252.png" onerror="this.style.display='none'">
+                            <div class="image-placeholder-text">
+                                <strong>[ 病人端 - 量表與自訂日期 ]</strong>
+                                <span>(請點選此處或參考 screenshots 資料夾)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 項目 3 -->
+                    <div class="screenshot-item">
+                        <div class="screenshot-title">
+                            醫師端 - 趨勢圖與真實病歷連動
+                            <span class="badge">Doctor Dashboard</span>
+                        </div>
+                        <div class="image-wrapper">
+                            <!-- 請更換為 screenshots 資料夾下最佳的醫師儀表板截圖 -->
+                            <img src="screenshots/media__1779834618274.png" onerror="this.style.display='none'">
+                            <div class="image-placeholder-text">
+                                <strong>[ 醫師端 - 趨勢與即時病歷 ]</strong>
+                                <span>(請點選此處或參考 screenshots 資料夾)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 項目 4 -->
+                    <div class="screenshot-item">
+                        <div class="screenshot-title">
+                            個管師端 - 智能個案追蹤與臨床建議
+                            <span class="badge">Case Management</span>
+                        </div>
+                        <div class="image-wrapper">
+                            <!-- 請更換為 screenshots 資料夾下最佳的個案管理師截圖 -->
+                            <img src="screenshots/media__1779836898079.png" onerror="this.style.display='none'">
+                            <div class="image-placeholder-text">
+                                <strong>[ 個管師端 - 追蹤管理頁面 ]</strong>
+                                <span>(請點選此處或參考 screenshots 資料夾)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. 成果與結論 -->
+            <div class="section-card">
+                <h2 class="section-title">成果與結論</h2>
+                <p class="section-text">
+                    本照護管理系統整合偏頭痛發作日記、規律回診提醒與健康評估量表，不僅大幅降低病患發作時的紀錄難度，亦全面提升醫師的臨床診斷評估效率。初步的使用者測試與臨床案例訪談回饋顯示：
+                </p>
+                <p class="section-text" style="margin-top: 10px;">
+                    系統流程順暢，統計圖表能直覺化反映症狀演變趨勢，對門診用藥調整具極大決策輔助價值。未來規劃進一步引進機器學習模型，預測個別病患之發作風險，以健全更具前瞻性的偏頭痛數位照護體系。
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-banner">
+            指導老師：黃建中老師 | 偏頭痛個案照護管理系統學術發表
+        </div>
+    </div>
+
+</body>
+</html>
