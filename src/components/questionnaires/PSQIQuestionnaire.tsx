@@ -3,7 +3,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 
 interface PSQIQuestionnaireProps {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (score: number) => void;
 }
 
 export function PSQIQuestionnaire({ onBack, onComplete }: PSQIQuestionnaireProps) {
@@ -59,7 +59,7 @@ export function PSQIQuestionnaire({ onBack, onComplete }: PSQIQuestionnaireProps
     const quality = total > 5 ? '睡眠品質不佳' : '睡眠品質良好';
 
     alert(`PSQI 評估結果：\n\n總分：${total}\n評估：${quality}\n\n評估結果將儲存至系統。`);
-    onComplete();
+    onComplete(total);
   };
 
   const getScore = () => {

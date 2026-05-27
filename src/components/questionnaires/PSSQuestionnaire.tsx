@@ -3,7 +3,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 
 interface PSSQuestionnaireProps {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (score: number) => void;
 }
 
 export function PSSQuestionnaire({ onBack, onComplete }: PSSQuestionnaireProps) {
@@ -48,7 +48,7 @@ export function PSSQuestionnaire({ onBack, onComplete }: PSSQuestionnaireProps) 
     else level = '高壓力';
 
     alert(`PSS 評估結果：\n\n總分：${total}\n程度：${level}\n\n評估結果將儲存至系統。`);
-    onComplete();
+    onComplete(total);
   };
 
   const getScore = () => {

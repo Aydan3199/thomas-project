@@ -3,7 +3,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 
 interface MIDASQuestionnaireProps {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (score: number) => void;
 }
 
 export function MIDASQuestionnaire({ onBack, onComplete }: MIDASQuestionnaireProps) {
@@ -25,7 +25,7 @@ export function MIDASQuestionnaire({ onBack, onComplete }: MIDASQuestionnairePro
     }
     const total = answers.reduce((sum, val) => sum + (val === '' ? 0 : val), 0);
     alert(`您的 MIDAS 總分為：${total}\n\n評估結果將儲存至系統。`);
-    onComplete();
+    onComplete(total);
   };
 
   const getGrade = () => {

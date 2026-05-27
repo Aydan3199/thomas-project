@@ -18,4 +18,8 @@ public class User {
     private String password;
 
     private String role; // 'patient', 'doctor', 'caseManager'
+
+    private Integer age;
+    private String gender;
+    private String phone;
 }

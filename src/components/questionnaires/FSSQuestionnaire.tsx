@@ -3,7 +3,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 
 interface FSSQuestionnaireProps {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (score: number) => void;
 }
 
 export function FSSQuestionnaire({ onBack, onComplete }: FSSQuestionnaireProps) {
@@ -16,7 +16,7 @@ export function FSSQuestionnaire({ onBack, onComplete }: FSSQuestionnaireProps) 
     '疲倦會干擾我的身體功能',
     '疲倦經常造成問題',
     '疲倦阻止我持續的身體活動',
-    '疲倦會干擾我執行某些職責和責任',
+    '疲倦會干擾我執行某些職責 and 責任',
     '疲倦是我最使人困擾的三個症狀之一',
     '疲倦會干擾我的工作、家庭或社交生活',
   ];
@@ -35,7 +35,7 @@ export function FSSQuestionnaire({ onBack, onComplete }: FSSQuestionnaireProps) 
     const level = parseFloat(average) >= 4 ? '顯著疲勞' : '正常範圍';
 
     alert(`FSS 評估結果：\n\n平均分數：${average}\n評估：${level}\n\n評估結果將儲存至系統。`);
-    onComplete();
+    onComplete(total);
   };
 
   const getAverage = () => {

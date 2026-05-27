@@ -3,7 +3,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 
 interface WPIQuestionnaireProps {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (score: number) => void;
 }
 
 export function WPIQuestionnaire({ onBack, onComplete }: WPIQuestionnaireProps) {
@@ -41,7 +41,7 @@ export function WPIQuestionnaire({ onBack, onComplete }: WPIQuestionnaireProps) 
     e.preventDefault();
     const score = selectedAreas.length;
     alert(`WPI 評估結果：\n\n廣泛疼痛指數：${score}/19\n\n評估結果將儲存至系統。`);
-    onComplete();
+    onComplete(score);
   };
 
   return (

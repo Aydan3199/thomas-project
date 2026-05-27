@@ -54,6 +54,13 @@ export function DoctorDashboard({ user, onLogout, onNavigate }: DoctorDashboardP
     patient.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const totalPatientsCount = patients.length;
+  const totalCompletedQ = patients.reduce((sum, p: any) => sum + (p.completedCount || 0), 0);
+  const totalExpectedQ = totalPatientsCount * 8;
+  const completionRate = totalExpectedQ > 0 
+    ? Math.round((totalCompletedQ / totalExpectedQ) * 100) 
+    : 0;
+
   const getRiskColor = (level: string) => {
     switch (level) {
       case 'high':
@@ -162,7 +169,7 @@ export function DoctorDashboard({ user, onLogout, onNavigate }: DoctorDashboardP
               </div>
             </div>
             <div className="text-text-secondary">本月問卷完成率</div>
-            <h3 className="text-success">N/A</h3>
+            <h3 className="text-success">{totalPatientsCount > 0 ? `${completionRate}%` : '0%'}</h3>
           </div>
         </div>
 

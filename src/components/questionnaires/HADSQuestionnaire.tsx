@@ -3,7 +3,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 
 interface HADSQuestionnaireProps {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (anxietyScore: number, depressionScore: number) => void;
 }
 
 export function HADSQuestionnaire({ onBack, onComplete }: HADSQuestionnaireProps) {
@@ -44,7 +44,7 @@ export function HADSQuestionnaire({ onBack, onComplete }: HADSQuestionnaireProps
     alert(
       `HADS 評估結果：\n\n焦慮分數 (A)：${anxietyScore}\n憂鬱分數 (D)：${depressionScore}\n\n評估結果將儲存至系統。`
     );
-    onComplete();
+    onComplete(anxietyScore, depressionScore);
   };
 
   const getAnxietyScore = () => {

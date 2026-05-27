@@ -3,7 +3,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 
 interface AllodyniaQuestionnaireProps {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (score: number) => void;
 }
 
 export function AllodyniaQuestionnaire({ onBack, onComplete }: AllodyniaQuestionnaireProps) {
@@ -41,7 +41,7 @@ export function AllodyniaQuestionnaire({ onBack, onComplete }: AllodyniaQuestion
     else severity = '嚴重異位性疼痛';
 
     alert(`Allodynia 評估結果：\n\n總分：${score}/12\n程度：${severity}\n\n評估結果將儲存至系統。`);
-    onComplete();
+    onComplete(score);
   };
 
   const getScore = () => {

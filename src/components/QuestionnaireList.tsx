@@ -101,10 +101,10 @@ export function QuestionnaireList() {
     }
   }, [currentUser]);
 
-  const handleComplete = async (questionnaireId: string) => {
+  const handleComplete = async (questionnaireId: string, score: number = 0, targetListId?: string) => {
     if (!currentUser) return;
     
-    // Simplistic completion saving (can be extended to include actual scores)
+    const displayId = targetListId || questionnaireId;
     try {
         await fetch(`${API_BASE_URL}/api/questionnaires`, {
             method: 'POST',
@@ -112,14 +112,14 @@ export function QuestionnaireList() {
             body: JSON.stringify({
                 patientId: currentUser.id,
                 questionnaireId: questionnaireId,
-                score: 0,
+                score: score,
                 details: 'Completed via UI'
             })
         });
         
         setQuestionnaires((prev) =>
           prev.map((q) =>
-            q.id === questionnaireId
+            q.id === displayId
               ? { ...q, completed: true, lastCompleted: new Date().toISOString().split('T')[0] }
               : q
           )
@@ -132,28 +132,36 @@ export function QuestionnaireList() {
   };
 
   if (selectedQuestionnaire === 'midas') {
-    return <MIDASQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={() => handleComplete('midas')} />;
+    return <MIDASQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('midas', score)} />;
   }
   if (selectedQuestionnaire === 'hads') {
-    return <HADSQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={() => handleComplete('hads')} />;
+    return (
+      <HADSQuestionnaire 
+        onBack={() => setSelectedQuestionnaire(null)} 
+        onComplete={async (anxiety, depression) => {
+          await handleComplete('hads-anxiety', anxiety, 'hads');
+          await handleComplete('hads-depression', depression, 'hads');
+        }} 
+      />
+    );
   }
   if (selectedQuestionnaire === 'bdi') {
-    return <BDIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={() => handleComplete('bdi')} />;
+    return <BDIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('bdi', score)} />;
   }
   if (selectedQuestionnaire === 'psqi') {
-    return <PSQIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={() => handleComplete('psqi')} />;
+    return <PSQIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('psqi', score)} />;
   }
   if (selectedQuestionnaire === 'fss') {
-    return <FSSQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={() => handleComplete('fss')} />;
+    return <FSSQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('fss', score)} />;
   }
   if (selectedQuestionnaire === 'wpi') {
-    return <WPIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={() => handleComplete('wpi')} />;
+    return <WPIQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('wpi', score)} />;
   }
   if (selectedQuestionnaire === 'allodynia') {
-    return <AllodyniaQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={() => handleComplete('allodynia')} />;
+    return <AllodyniaQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('allodynia', score)} />;
   }
   if (selectedQuestionnaire === 'pss') {
-    return <PSSQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={() => handleComplete('pss')} />;
+    return <PSSQuestionnaire onBack={() => setSelectedQuestionnaire(null)} onComplete={(score) => handleComplete('pss', score)} />;
   }
 
   return (
